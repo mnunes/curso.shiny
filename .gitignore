@@ -44,3 +44,9 @@ slides/slides.nav
 slides/slides.pdf
 slides/slides.rnw
 slides/slides.tex
+*.aux
+*.aux
+*.log
+*.nav
+*.out
+slides/slides.R
