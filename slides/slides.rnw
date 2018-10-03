@@ -613,6 +613,8 @@ knit_theme$set("print2") #% ajuste para evitar a zoada do single $
 \begin{enumerate}[label=$\bullet$, leftmargin=*]
 
   \item \texttt{selectInput}: cria uma caixa com uma lista de seleção
+
+  \item \texttt{sliderInput}: cria uma maneira de selecionar um valor numérico em um intervalo
   
 \end{enumerate}
 
