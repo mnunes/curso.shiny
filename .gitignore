@@ -50,3 +50,6 @@ slides/slides.tex
 *.nav
 *.out
 slides/slides.R
+slides/slides.snm
+slides/slides.toc
+slides/slides.vrb
