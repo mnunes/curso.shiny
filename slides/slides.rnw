@@ -1,0 +1,807 @@
+\documentclass[12pt, compress, usetitleprogressbar]{beamer}
+
+\usetheme{metropolis}
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usepackage{minted}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+%\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[portuges]{babel}
+%\usepackage[portuges]{polyglossia}
+%\usepackage{polyglossia}
+\usepackage{bm}
+\usepackage{enumitem}
+\usepackage{icomma}
+\usepackage[retainorgcmds]{IEEEtrantools}
+\usepackage[showonlyrefs]{mathtools}
+\usepackage{media9}
+\usepackage{multirow}
+\usepackage{natbib}
+\usepackage{shadow}
+\usepackage{subfigure}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{verbatim}
+\usepackage{xcolor}
+
+%\usepgfplotslibrary{dateplot}
+
+\usemintedstyle{trac}
+
+
+%%% Identification
+
+\title{Introdução ao Shiny}
+\subtitle{Como Criar Aplicativos Web Utilizando o R}
+\date{23 e 24 de Outubro de 2018}
+\author{Marcus Nunes}
+\institute{Universidade Federal do Rio Grande do Norte}
+
+
+
+%%% New colors
+
+\definecolor{mDarkBrown}{HTML}{604c38}
+\definecolor{mDarkTeal}{HTML}{23373b}
+
+\definecolor{mLightBrown}{HTML}{EB811B}
+\definecolor{mMediumBrown}{HTML}{C87A2F}
+
+\definecolor{mLightRed}{HTML}{EB331B}
+\definecolor{mLightGreen}{HTML}{14B03D}
+\definecolor{mLightTeal}{HTML}{137D91}
+
+
+
+% Define block styles
+
+\tikzstyle{block} = [rectangle, draw, fill=mDarkTeal, 
+    text width=6em, text centered, rounded corners, minimum height=4em]
+\tikzstyle{line} = [draw, -latex']
+\tikzstyle{blockFeatured} = [rectangle, draw, fill=mLightTeal, 
+    text width=6em, text centered, rounded corners, minimum height=4em]
+
+
+% Translations
+
+\deftranslation[to=portuges]{Theorem}{Teorema}
+\deftranslation[to=portuges]{theorem}{teorema}
+\deftranslation[to=portuges]{Definition}{Definição}
+\deftranslation[to=portuges]{definition}{definição}
+\deftranslation[to=portuges]{Corollary}{Corolário}
+\deftranslation[to=portuges]{corollary}{corolário}
+\deftranslation[to=portuges]{Proof}{Prova}
+\deftranslation[to=portuges]{proof}{prova}
+\deftranslation[to=portuges]{Example}{Exemplo}
+\deftranslation[to=portuges]{example}{exemplo}
+
+
+%\setmainlanguage{portuguese}
+
+
+
+
+
+\begin{document}
+
+
+% new commands
+
+\newcommand{\alphahat}{\widehat{\alpha}}
+\newcommand{\amostra}{x_1, x_2, \cdots, x_n}
+\newcommand{\Amostra}{X_1, X_2, \cdots, X_n}
+\newcommand{\AmostraY}{Y_1, Y_2, \cdots, Y_m}
+\newcommand{\AmostraYn}{Y_1, Y_2, \cdots, Y_n}
+\newcommand{\Bin}{\mbox{Bin}}
+\newcommand{\Dbar}{\overline{D}}
+\newcommand{\dbar}{\overline{d}}
+\newcommand{\E}{E}
+\newcommand{\EP}{\mbox{EP}}
+\newcommand{\EPe}{\widehat{\mbox{EP}}}
+\newcommand{\EQM}{\mbox{EQM}}
+\newcommand{\EMV}{\mbox{EMV}}
+\newcommand{\ErroPadrao}{\mbox{Erro Padrão}}
+\newcommand{\Estimativa}{\mbox{Estimativa}}
+\newcommand{\Exp}{\mbox{Exp}}
+\newcommand{\IC}{\mbox{IC}}
+\newcommand{\integral}{\int_{-\infty}^{\infty}}
+\newcommand{\LL}{\mathcal{L}}
+\newcommand{\limite}{\lim_{n \rightarrow \infty}}
+\newcommand{\Med}{\mbox{Med}}
+\newcommand{\Multiplicador}{\mbox{Multiplicador}}
+\newcommand{\p}{\widehat{p}}
+\newcommand{\parametros}{\theta_1, \cdots, \theta_r}
+\newcommand{\parametroshat}{\widehat{\theta_1}, \cdots, \widehat{\theta_r}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\sigmahat}{\widehat{\sigma}}
+\newcommand{\specialcell}[2][t]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+\newcommand{\soma}{X_1 + X_2 + \cdots + X_n}
+\newcommand{\soman}{\sum_{i=1}^n}
+\newcommand{\talpha}{t_{(gl; \alpha/2)}}
+\newcommand{\thetahat}{\widehat{\theta}}
+\newcommand{\Unif}{\mbox{Unif}}
+\newcommand{\Var}{\mbox{Var}}
+\newcommand{\Weibull}{\mbox{Weibull}}
+\newcommand{\Xb}{\bm{X}}
+\newcommand{\xb}{\bm{x}}
+\newcommand{\Xbar}{\overline{X}}
+\newcommand{\XbarCum}{\overline{X}_{c_1}}
+\newcommand{\XbarCdois}{\overline{X}_{c_2}}
+\newcommand{\xbar}{\overline{x}}
+\newcommand{\Yb}{\bm{Y}}
+\newcommand{\Ybar}{\overline{Y}}
+\newcommand{\Yhat}{\widehat{Y}}
+\newcommand{\zalpha}{z_{\alpha/2}}
+\newcommand{\Zbarra}{\overline{Z}}
+\newcommand{\zg}{z_{\gamma}}
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+% knitr options
+
+<<setup, include=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize', small.mar=TRUE)
+knit_hooks$set(small.mar = function(before, options, envir) {
+    if (before) par(mar = c(14.5, 4, 2, 4)) 
+})
+@
+
+<<options, cache=FALSE, echo=FALSE, eval=TRUE, tidy=TRUE, dpi=144, small.mar=TRUE>>=
+options(width=60, warn=-1)
+#par(cex=2)
+opts_knit$set(out.format = "latex")
+opts_chunk$set(prompt=TRUE, tidy.opts=list(width.cutoff=40), tidy=FALSE, fig.width=5.5, fig.height=5.5)
+knit_theme$set("print2")
+knit_theme$set("print2") #% ajuste para evitar a zoada do single $
+@
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+
+\maketitle
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Introdução}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Introdução}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \texttt{shiny} é um pacote do R com um framework para criação de aplicativos web
+
+  \item Ele permite que pessoas com pouca experiência em programação web consigam criar sites dinâmicos utilizando seus conhecimentos em R
+
+  \item Algumas aplicações feitas com o \texttt{shiny} podem ser vistas em \url{http://shiny.estatistica.ccet.ufrn.br}
+
+  \item O conteúdo deste curso está disponível no endereço \url{https://github.com/mnunes/curso.shiny/}
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Instalação do Shiny}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}[fragile]
+
+\frametitle{Anatomia de Um \emph{Shiny App}}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Como todo pacote do \texttt{R}, o \texttt{shiny} pode ser instalado a partir do prompt através do comando
+
+  <<shinyInstall01, echo=TRUE, eval=FALSE>>=
+  install.packages("shiny")
+  @
+
+  \item Ao rodar
+
+  <<shinyInstall02, echo=TRUE, eval=FALSE>>=
+  library(shiny)
+  @
+
+  \noindent o pacote estará carregado e pronto para uso
+
+  %\item Não é necessário se preocupar com 
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Anatomia de Um Shiny App}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Anatomia de Um \emph{Shiny App}}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Todo \emph{shiny app} é composto de até três partes:
+
+  \begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+    \item \texttt{ui.R}: é onde a interface com o usuário (user interface) é definida
+
+    \item \texttt{server.R}: os comandos do R que são a alma do app estão neste arquivo, ou seja, é aqui que os gráficos são construídos, que dados são filtrados etc.
+
+    \item \texttt{global.R}: serve para organizar o carregamento de pacotes, conjuntos de dados e tudo o que necessitar ser acessado de maneira global pelo app
+
+  \end{enumerate}
+
+  \item Enquanto os arquivos \texttt{server.R} e \texttt{ui.R} são obrigatórios, o arquivo \texttt{global.R} é opcional
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\begin{comment}
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Anatomia de Um Shiny App}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Vamos ver como isso funciona na prática
+
+  \item Abra todos os três arquivos da pasta \texttt{exemplos/01-kmeans/}
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Anatomia de Um Shiny App}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Vamos fazer algumas alterações em um aplicativo mais simples
+
+  \item Abra todos os três arquivos da pasta \texttt{exemplos/02-histograma/}
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+\end{comment}
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Anatomia de Um Shiny App}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Vamos ver como isso funciona na prática
+
+  \item Abra os arquivos \texttt{ui.R}, \texttt{server.R} e \texttt{global.R} presentes na pasta \texttt{exemplos/01-histograma/}
+
+  \item A melhor maneira de aprender como utilizar o \texttt{shiny} é fazendo algumas alterações em um aplicativo mais simples e vendo como estas alterações se comportam
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Anatomia de Um \emph{Shiny App}}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Programas simples podem ser rodados em apenas um arquivo
+
+  \item Podemos colocar os códigos presentes em \texttt{ui.R}, \texttt{server.R} e \texttt{global.R} em somente um local
+
+  \item Abra o arquivo \texttt{exemplos/01-histograma/hist-simples.R} para ver como isto é feito
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+\begin{comment}
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}[fragile]
+
+\frametitle{Anatomia de Um \emph{Shiny App}}
+
+<<shinySimples, eval=FALSE>>=
+
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+\end{comment}
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Tipos de Layout}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Layout}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item O \texttt{shiny} já vem com diversos layouts pré-configurados para que possamos criar nossas ferramentas
+
+  \item Basta escolher um deles e começar a produzir o nosso app
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Layout}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \texttt{sidebarLayout}
+
+  \item \texttt{splitLayout}
+
+  \item \texttt{verticalLayout}
+
+  \item \texttt{flowLayout}
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Tipos de Interação}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Interação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Já vimos algumas maneiras de interagir com os apps utilizando
+
+  \item Estas maneiras não são as únicas de criarmos formas de interação com nossos programas
+
+  \item Abra os arquivos da pasta \texttt{03-inputs} para que exploremos elas
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Interação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \texttt{checkboxInput}: cria uma caixa de seleção com apenas uma opção
+
+  \item \texttt{checkboxGroupInput}: cria uma caixa de seleção com mais de uma opção
+
+  \item \texttt{dateInput}: abre um calendário para a seleção de datas
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Interação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \texttt{textInput}: cria uma caixa de texto
+
+  \item \texttt{numericInput}: cria uma caixa que recebe apenas números
+
+  \item \texttt{passwordInput}: cria uma caixa de texto para receber senhas
+  
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Interação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \texttt{selectInput}: cria uma caixa com uma lista de seleção
+  
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Tipos de Interação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item 
+  
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Nosso Primeiro Projeto}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Nosso Primeiro Projeto}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Não há como iniciar um projeto sem sabermos onde queremos chegar
+
+  \item Por isso, é importante definirmos qual o objetivo 
+
+  \item Eu tenho uma proposta: criar um dashboard para análise de pokémons
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Nosso Primeiro Projeto}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item \alert{Dashboard} é uma página que exibe informações importantes sobre algum assunto de interesse
+
+  \item Estas informações vão de coisas simples, como um gráfico de linha com o total de vendas anuais de uma empresa, até informações complexas, como o mapa de calor das vendas de acordo com a sua localização geográfica
+
+  \item Em um dashboard são exibidos tabelas, gráficos e mecanismos de controle e personalização das informações
+
+  \item Assim, em vez de criarmos milhares de relatórios personalizados, deixamos que o usuário decida que informações ele deseja 
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Melhorando a Apresentação}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Melhorando a Apresentação}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item 
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\plain{Considerações Finais}
+
+%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+%%% SLIDE %%%
+
+\begin{frame}
+
+\frametitle{Considerações Finais}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item 
+
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+\end{document}

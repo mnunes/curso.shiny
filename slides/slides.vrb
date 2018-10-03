@@ -1,0 +1,31 @@
+
+\frametitle{Anatomia de Um \emph{Shiny App}}
+
+\begin{enumerate}[label=$\bullet$, leftmargin=*]
+
+  \item Como todo pacote do \texttt{R}, o \texttt{shiny} pode ser instalado a partir do prompt através do comando
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.98, 0.98, 0.98}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{install.packages}\hlstd{(}\hlstr{"shiny"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+  \item Ao rodar
+
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.98, 0.98, 0.98}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{> }\hlkwd{library}\hlstd{(shiny)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+  \noindent o pacote estará carregado e pronto para uso
+
+  %\item Não é necessário se preocupar com
+
+\end{enumerate}
+
