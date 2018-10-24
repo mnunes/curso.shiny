@@ -14,7 +14,4 @@ slides/slides.R
 slides/slides.snm
 slides/slides.toc
 slides/slides.vrb
-exemplos/05-projeto/global.R
-exemplos/05-projeto/server.R
-exemplos/05-projeto/ui.R
 *.out
