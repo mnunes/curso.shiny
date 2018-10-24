@@ -9,7 +9,7 @@ ui <- shinyUI(
             hr(), # inserir uma linha
             # textInput
             textInput(inputId = "texto",
-                      label = "Qual o seu nome?", value = "usuario"),
+                      label = "Qual o seu nome?", value = "Preencha com o seu nome"),
             # numericInput
             numericInput(inputId = "numero",
                          label = "Escolha um numero entre 0 a 10", 
